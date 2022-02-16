@@ -1,0 +1,161 @@
+{
+	"name": "Notebook 1",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "cameleon",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "de153eb7-0e27-46a0-8c89-bf393f47ed68"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"synapse_widget": {
+				"version": "0.1"
+			},
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/da74e3ed-9c9a-4605-8fae-10f3492c0f5c/resourceGroups/Data-CoE/providers/Microsoft.Synapse/workspaces/synapsekeyvault/bigDataPools/cameleon",
+				"name": "cameleon",
+				"type": "Spark",
+				"endpoint": "https://synapsekeyvault.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/cameleon",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.1",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"extraHeader": null
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"from azureml.opendatasets import PublicHolidays\r\n",
+					"\r\n",
+					"from datetime import datetime\r\n",
+					"from dateutil import parser\r\n",
+					"from dateutil.relativedelta import relativedelta\r\n",
+					"\r\n",
+					"import pandas as pd\r\n",
+					"from pyspark.sql import *\r\n",
+					"import pandas as pd\r\n",
+					"\r\n",
+					"\r\n",
+					"end_date = datetime.today()\r\n",
+					"start_date = datetime.today() - relativedelta(months=6)\r\n",
+					"hol = PublicHolidays(start_date=start_date, end_date=end_date)\r\n",
+					"hol_df = hol.to_spark_dataframe()"
+				],
+				"attachments": null,
+				"execution_count": 1
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Display 5 rows\r\n",
+					"hol_df.show()"
+				],
+				"attachments": null,
+				"execution_count": 2
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"jdbcHostname = \"sql-datacoe-dev.database.windows.net\"\r\n",
+					"jdbcPort = \"1433\"\r\n",
+					"jdbcDatabase = \"cameleon\"\r\n",
+					"properties = {\r\n",
+					" \"user\" : \"sqladmin\",\r\n",
+					" \"password\" : \"Corvet15!\" }"
+				],
+				"attachments": null,
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"finalDf = DataFrameWriter(hol_df)"
+				],
+				"attachments": null,
+				"execution_count": 5
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"url = \"jdbc:sqlserver://{0}:{1};database={2}\".format(jdbcHostname,jdbcPort,jdbcDatabase)\r\n",
+					"finalDf.jdbc(url=url, table= \"Cameleon_Table_New\", mode =\"overwrite\", properties = properties)"
+				],
+				"attachments": null,
+				"execution_count": 23
+			}
+		]
+	}
+}
