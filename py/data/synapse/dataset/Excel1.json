@@ -1,0 +1,51 @@
+{
+    "name": "Excel1",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "AzureBlobStorage1",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "Excel",
+        "typeProperties": {
+            "sheetName": "Sheet1",
+            "location": {
+                "type": "AzureBlobStorageLocation",
+                "fileName": "IRI_au.xlsx",
+                "container": "synapseconverter"
+            },
+            "firstRowAsHeader": true
+        },
+        "schema": [
+            {
+                "name": "product_tag",
+                "type": "String"
+            },
+            {
+                "name": "market_long_description",
+                "type": "String"
+            },
+            {
+                "name": "market_short_description",
+                "type": "String"
+            },
+            {
+                "name": "country",
+                "type": "String"
+            },
+            {
+                "name": "sales_units",
+                "type": "String"
+            },
+            {
+                "name": "sales_units_yrago",
+                "type": "String"
+            },
+            {
+                "name": "sales_volume",
+                "type": "String"
+            }
+        ]
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,6 @@
+selected resource name:		pipeline1
+selected resource type:		pipeline
+workspace name:			synapsekeyvault
+workspace location:		eastus
+subscription id:		da74e3ed-9c9a-4605-8fae-10f3492c0f5c
+time of download (UTC):		Tue, 15 Feb 2022 19:26:10 GMT

@@ -1,0 +1,52 @@
+{
+    "name": "AzureSqlTable1",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "AzureSqlDatabase1",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [
+            {
+                "name": "product_tag",
+                "type": "nvarchar"
+            },
+            {
+                "name": "market_long_description",
+                "type": "nvarchar"
+            },
+            {
+                "name": "market_short_description",
+                "type": "nvarchar"
+            },
+            {
+                "name": "country",
+                "type": "varchar"
+            },
+            {
+                "name": "sales_units",
+                "type": "decimal",
+                "precision": 25,
+                "scale": 5
+            },
+            {
+                "name": "sales_units_yrago",
+                "type": "decimal",
+                "precision": 25,
+                "scale": 5
+            },
+            {
+                "name": "sales_volume",
+                "type": "decimal",
+                "precision": 25,
+                "scale": 5
+            }
+        ],
+        "typeProperties": {
+            "schema": "dbo",
+            "table": "Cameleon_Table"
+        }
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}
