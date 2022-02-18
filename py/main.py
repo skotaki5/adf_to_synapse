@@ -1,90 +1,48 @@
 import csv
+import sys
 
 import configparser
+
 import json
+
+config_map_section = 'mapping-synapse_to_adf'
 
 # https://www.kite.com/python/answers/how-to-update-a-json-file-in-python#:~:text=Use%20json.,to%20update%20a%20JSON%20file&text=Call%20file.,stream%20of%20file%20for%20writing.
 # https://docs.python.org/3/library/configparser.html
 
 
-notb = {
-                "name": "Notebook2",
-                "type": "SynapseNotebook",
-                "dependsOn": [
-                    {
-                        "activity": "Stored procedure1",
-                        "dependencyConditions": [
-                            "Succeeded"
-                        ]
-                    }
-                ],
-                "policy": {
-                    "timeout": "7.00:00:00",
-                    "retry": 0,
-                    "retryIntervalInSeconds": 30,
-                    "secureOutput": False,
-                    "secureInput": False
-                },
-                "userProperties": [],
-                "typeProperties": {
-                    "notebook": {
-                        "referenceName": "Notebook 1",
-                        "type": "NotebookReference"
-                    },
-                    "snapshot": True,
-                    "sparkPool": {
-                        "referenceName": "cameleon",
-                        "type": "BigDataPoolReference"
-                    }
-                }
-            }
-
-
-myobj = json.dumps(notb)
-mo = json.loads(myobj)
-# print(type(mo))
-# exit(90)
-
+# def main(src_pipeline, dst_pipeline):
 def main():
     config = configparser.ConfigParser()
-    config.read('config.ini')
-    print(config['adf']['notebook1'])
-    print(config['synapse']['synnote'])
+    config.read("config.ini")
+    notebooks = []
+    for c in config[config_map_section]:
+        notebooks.append(c)
 
-    # exit(9)
-    f = open('in/adf-pipeline/pipeline1.json', 'r')
-    obj = json.load(f)
-    f.close()
-    obj['name'] = 'p1'
-    print(obj['name'])
+    f1 = open('in/adf-pipeline/pipeline1.json', 'r')
+    f2 = open('in/notebooks/Notebook2.json', 'r')
 
-    act = obj['properties']['activities']
-    print(len(act))
+    o1 = json.load(f1)
+    n2 = json.load(f2)
+
+    f1.close()
+    f2.close()
+
+    adf_notebook_name = config[config_map_section][notebooks[0]]
+
+    activities = o1['properties']['activities']
+
     ind = 0
-    for a in act:
-        if a['name'] == 'Notebook1':
-            print("I found it!!!")
-            obj['properties']['activities'][ind] = mo
-            print(a)
-            print(type(a))
-            break
+    for a in activities:
+        if a['name'] == adf_notebook_name:
+            o1['properties']['activities'][ind] = n2
         ind += 1
-
-    # obj['properties']['activities'] = []
-
-    f = open('out/p1.json', 'w')
-    json.dump(obj, f)
-    f.close()
-
-
-def main1():
-    with open('in/mycsv.csv', 'r', newline="\n") as fr:
-        data = csv.reader(fr, delimiter=",")
-
-        for r in data:
-            print(r)
-
-        print(type(data))
+    o_str = json.dumps(o1)
+    o_str = o_str.replace(adf_notebook_name,n2['name'])
+    o1 = json.loads(o_str)
+    wf = open('out/pipeline-modified-2.json', 'w')
+    json.dump(o1, wf)
+    wf.close()
 
 
 if __name__ == '__main__':

@@ -8,7 +8,9 @@ def main():
     print(os.getcwd())
 
     # write git command line commands
-    c = os.system("git status")
+    c = os.system("git pull")
+    print(c)
+    c = os.system("git push")
     print(c)
 
 
