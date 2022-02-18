@@ -1,0 +1,39 @@
+{
+    "name": "dataflow1",
+    "properties": {
+        "type": "MappingDataFlow",
+        "typeProperties": {
+            "sources": [
+                {
+                    "linkedService": {
+                        "referenceName": "linkedService_df1",
+                        "type": "LinkedServiceReference"
+                    },
+                    "name": "source1"
+                },
+                {
+                    "linkedService": {
+                        "referenceName": "linkedService_df2",
+                        "type": "LinkedServiceReference"
+                    },
+                    "name": "source2"
+                }
+            ],
+            "sinks": [
+                {
+                    "linkedService": {
+                        "referenceName": "linkedService_df",
+                        "type": "LinkedServiceReference"
+                    },
+                    "name": "sink1"
+                }
+            ],
+            "transformations": [
+                {
+                    "name": "Join1"
+                }
+            ],
+            "script": "source(output(\n\t\tID as short,\n\t\tproduct_tag as string,\n\t\tmarket_long_description as string,\n\t\tmarket_short_description as string,\n\t\tcountry as string,\n\t\tsales_units as integer,\n\t\tsales_units_yrago as integer,\n\t\tsales_volume as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'excel',\n\tcontainer: 'synapseconverter',\n\tfileName: 'IRI_join1.xlsx',\n\tsheetName: 'Sheet1',\n\tfirstRowAsHeader: true) ~> source1\nsource(output(\n\t\tID as short,\n\t\tproduct_tag as string,\n\t\tmarket_long_description as string,\n\t\tmarket_short_description as string,\n\t\tcountry as string,\n\t\tsales_units as integer,\n\t\tsales_units_yrago as integer,\n\t\tsales_volume as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'excel',\n\tcontainer: 'synapseconverter',\n\tfileName: 'IRI_join2.xlsx',\n\tsheetName: 'Sheet1',\n\tfirstRowAsHeader: true) ~> source2\nsource1, source2 join(source1@ID == source2@ID,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1\nJoin1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tstore: 'sqlserver',\n\tschemaName: 'dbo',\n\ttableName: 'Cameleon_Table_Cross',\n\tinsertable: true,\n\tupdateable: false,\n\tdeletable: false,\n\tupsertable: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1"
+        }
+    }
+}
